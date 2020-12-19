@@ -1984,6 +1984,14 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
 //
 //
 //
@@ -1994,11 +2002,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  computed: {
-    isLogin: function isLogin() {
-      return this.$store.getters['auth/check'];
+  computed: _objectSpread(_objectSpread({}, mapState({
+    apiStatus: function apiStatus(state) {
+      return state.auth.apiStatus;
     }
-  },
+  })), mapGetters({
+    isLogin: "auth/check"
+  })),
   methods: {
     logout: function logout() {
       var _this = this;
@@ -2012,7 +2022,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return _this.$store.dispatch("auth/logout");
 
               case 2:
-                _this.$router.push("/login");
+                if (_this.apiStatus) {
+                  _this.$router.push("/login");
+                }
 
               case 3:
               case "end":
@@ -20695,7 +20707,7 @@ var render = function() {
         ? _c(
             "button",
             { staticClass: "button button--link", on: { click: _vm.logout } },
-            [_vm._v("Logout")]
+            [_vm._v("\n        Logout\n    ")]
           )
         : _c(
             "router-link",
