@@ -12,7 +12,8 @@ class PhotoController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except(['index','download']);
+        
     }
 
     public function create(Request $request,Photo $photo)
@@ -34,5 +35,29 @@ class PhotoController extends Controller
         }
 
         return response($photo,201);
+    }
+
+    public function index()
+    {
+        $photos = Photo::with(['owner'])
+            ->orderBy(Photo::CREATED_AT, 'desc')->paginate();
+
+        return $photos;
+    }
+
+    public function download(Photo $photo)
+    {
+        // 写真の存在チェック
+        if (!Storage::disk('locak')->exists($photo->filename)) {
+            abort(404);
+        }
+
+        $disposition = 'attachment; filename="' . $photo->filename . '"';
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => $disposition,
+        ];
+
+        return response(Storage::disk('locak')->get($photo->filename), 200, $headers);
     }
 }
