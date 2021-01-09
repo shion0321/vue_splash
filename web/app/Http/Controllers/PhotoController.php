@@ -25,7 +25,7 @@ class PhotoController extends Controller
         DB::beginTransaction();
 
         try {
-            Auth::user()->photo()->save($photo);
+            Auth::user()->photos()->save($photo);
 
         } catch (\Exception $e) {
             Db::rollBack();
